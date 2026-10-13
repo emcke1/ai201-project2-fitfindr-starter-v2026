@@ -59,24 +59,36 @@
 
 ### `search_listings`
 
-- **What it does:**
+- **What it does:** 
+searches the listing data using keyword discription by size and price
 - **Inputs:** <!-- name and type each: `max_price` (float), not "a price" -->
+takes in a dict that is the description and a dict of the description of the wardrobe
 - **Returns:**
+returns a list of matching dict that are best fit
 - **When it has nothing:**
+When there is nothing it will return an empty list, not None, and not an exception
 
 ### `suggest_outfit`
 
 - **What it does:**
+suggests 1 or 2 outfits based on the thrifted item and user's wardrobe
 - **Inputs:**
+a list of dict called 'new_item' of what the item the user is considering and a wardrobe dict w/ an 'items' key holding a list
 - **Returns:**
+returns non empty str w/ outfit suggestions
 - **When it has nothing:**
+For empty wardrobe returns general styling advice than an empty str
 
 ### `create_fit_card`
 
 - **What it does:**
+writes a short caption somebody would post about the find
 - **Inputs:**
+str called 'outfit' for outfit suggestion and a listing dicr for the item 'new_item'
 - **Returns:**
+2-4 sentence caption
 - **When it has nothing:**
+returns a descriptive msg if 'outfit' is empty or a whitespace than raising
 
 ---
 
