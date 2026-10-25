@@ -62,9 +62,10 @@
 - **What it does:** 
 searches the listing data using keyword discription by size and price
 - **Inputs:** <!-- name and type each: `max_price` (float), not "a price" -->
-takes in a dict that is the description and a dict of the description of the wardrobe
+description (str), keywords like "vintage graphic tee"; size (str), like "M" or "W30 L30"; max_price(float), like 30.0
 - **Returns:**
-returns a list of matching dict that are best fit
+list of listing dicts that match all three inputs...each dict has id, title, description, category, style_tags, size, condition, price, colors, brand, and platform.
+- **When it has nothing:** Returns an empty list `[]`, not None and not an exception.
 - **When it has nothing:**
 When there is nothing it will return an empty list, not None, and not an exception
 
@@ -86,7 +87,7 @@ writes a short caption somebody would post about the find
 - **Inputs:**
 str called 'outfit' for outfit suggestion and a listing dicr for the item 'new_item'
 - **Returns:**
-2-4 sentence caption
+str:2-4 sentence caption
 - **When it has nothing:**
 returns a descriptive msg if 'outfit' is empty or a whitespace than raising
 
@@ -106,6 +107,7 @@ returns a descriptive msg if 'outfit' is empty or a whitespace than raising
      function have to be real. -->
 
 **Branch rule:**
+**Branch rule:** if search_listings returns an empty list put a message in the session that tells the user what to change (a higher max price, a different size, or fewer keywords) and stop without calling suggest_outfit. Otherwise, take the first result, save it as session["selected_item"], and go to suggest_outfit
 
 **Where it lives:** `agent.py::run_agent`
 
