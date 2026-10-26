@@ -331,7 +331,33 @@ that produced it:
 **Happy path**
 
 ```
+$ python app.py ask 'vintage graphic tee under $30' --trace
+[1] parse_query
+      in:  vintage graphic tee under $30
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 10 items: Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey, Y2K Baby Tee — Butterfly Print … +7 more
+      →    branch: found results, selected lst_006
+[3] suggest_outfit
+      in:  dict with keys: new_item, wardrobe_items
+      out: Outfit one leans into classic grunge. Pair the Graphic Tee — 2003 Tour Bootleg Style with the baggy straight-l…
+[4] create_fit_card
+      in:  dict with keys: new_item, outfit
+      out: Scored this moody 2003 tour bootleg style graphic tee on Depop for just $24, and it has the absolute best fade…
+```
 
+**Empty search**
+
+```
+$ python app.py ask 'designer ballgown size XXS under $5' --trace
+[1] parse_query
+      in:  designer ballgown size XXS under $5
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: [] (empty)
+      →    branch: empty, stopping before suggest_outfit
 ```
 
 **Empty search**
