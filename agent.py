@@ -214,13 +214,13 @@ def run_agent(query: str, wardrobe: dict) -> dict:
                            returned=session["fit_card"])
                 next_step = "done"
 
-    except ModelUnavailable:
+    except ModelUnavailable as exc:
         session["error"] = (
             "Couldn't reach the AI model, so no outfit or caption could be written. "
             "Check that GEMINI_API_KEY in your .env file is correct, then try again "
             "in a minute."
         )
-        trace.step("model unavailable", note="stopped, handler set session['error']")
+        trace.step("model unavailable", note=f"stopped, handler set session['error']. Cause: {str(exc)[:200]}")
 
     except MCPError:
         session["error"] = (

@@ -304,14 +304,17 @@ that produced it:
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Matching query completes all three tools | 4 of 5 | MET (4/5) | Tries 1, 2, 4, 5 returned a fit card. Try 3 stopped at step 3 with the model-unavailable message. |
+| 2 | Impossible query stops before suggest_outfit | 5 of 5 | MET (5/5) | All five traces end at step 2 with `[] (empty)` and the branch note, and fit_card stayed None. |
+| 3 | Selected item id matches id suggest_outfit received | 5 of 5 | MET (5/5) | Every trace shows `selected lst_022` in step 2 and `'new_item': 'lst_022'` in step 3. |
+| 4 | Fit card mentions the item's price | 4 of 5 | MET (5/5) | The item was $42 and all five captions said "$42". |
+| 5 | Empty wardrobe still gets outfit advice | 5 of 5 (revised) | MET (5/5) | All five show `'wardrobe_items': 0` and still returned non-empty advice and a fit card, no crash. |
 
 **Diagnoses**
 
+Nothing missed, but criterion 1's one FAIL is worth explaining because it didn't fail the way I expected. My reason for allowing a miss was that keyword search might not match phrasings like "t-shirt" vs "tee." That never happened. Search found the right item all five times. The failure was in the model step: on try 3, `suggest_outfit` couldn't reach the model and my `ModelUnavailable` handler in `agent.py::run_agent` stopped the run with a message. The handler worked, but it threw away the actual error, so the trace can't tell me if it was a rate limit, a timeout, or something else. That's a gap in my error handling, not my search.
+
+**Were my targets too low?** Honestly, yes for criterion 4. Every caption mentioned the price, so 4 of 5 was easy. If I tightened one, it'd be the fit card: most captions across the run open with "Scored this..." or "Found this...", so something like "for 5 different items, no two fit cards share an opening phrase" would actually test variety. Criterion 5 also only passed after I revised it, since the original had no number
 
 
 ---
