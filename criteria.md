@@ -25,9 +25,7 @@ Given a query that matches at least one listing, the agent completes all three
 tool calls and returns a fit card — in at least 4 of 5 tries.
 
 **Why this target:**
-<!-- Why 4 of 5 and not 5 of 5? Something about your search, probably —
-     "my search is a plain keyword match and some phrasings will miss" is a
-     real answer. -->
+the search is a keyword match so if someone types “t-shirt” and the listing title says “tee,” it won’t find it
 
 ---
 
@@ -37,9 +35,7 @@ Given a query that matches no listings, the agent stops before calling
 `suggest_outfit` and returns a message naming what to change — 5 of 5 tries.
 
 **Why this target:**
-<!-- Why is 5 of 5 reasonable here when criterion 1 isn't? What's different
-     about this path? -->
-
+the stopping happens in my own code there's no model involved... code that checks an empty list does the same thing every time
 ---
 
 ## 3. Something about state
@@ -54,10 +50,10 @@ Given a query that matches no listings, the agent stops before calling
      compares session["selected_item"] against what actually reached
      suggest_outfit is the shape you're after. -->
 
-
+the id saved in session["selected_item"] is the same id that suggest_outfit received, it’s the same item 5 out of 5 tries
 
 **Why this target:**
-
+Is isnt random... the itsem moves through the session by code not agent sp there's nothing random about it
 
 
 ---
@@ -75,10 +71,10 @@ Given a query that matches no listings, the agent stops before calling
      sentence? A card longer than a caption anyone would post? Any of those can
      be turned into a number. -->
 
-
+the  caption mentions the same price the same item 4 out 5 times
 
 **Why this target:**
-
+a model writes this, so it might drop something sometimes
 
 
 ---
