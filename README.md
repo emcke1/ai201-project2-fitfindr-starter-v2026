@@ -385,21 +385,21 @@ full. -->
 
      `python run_eval.py --label after` -->
 
-**What I changed:**
+**What I changed:** In `agent.py::run_agent`, the `ModelUnavailable` handler now captures the actual error (`except ModelUnavailable as exc`) and adds it to the trace note as "Cause: ...". The user still sees the same message. Only the trace gets the detail.
 
-**Which failure it was meant to fix:**
+**Which failure it was meant to fix:** Criterion 1, try 3 in the before run. The handler caught a model failure and stopped cleanly, but threw away the real error, so I couldn't tell whether it was a rate limit, a timeout, or something else.
 
 ### Run Log — After
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. Matching query completes all three tools | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 2. Impossible query stops before suggest_outfit | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 3. Selected item id matches id suggest_outfit received | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 4. Fit card mentions the item's price | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 5. Empty wardrobe still gets outfit advice | 5 of 5 (revised) | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
 
-**Did it help, and how do I know:**
+**Did it help, and how do I know:** I can't say it helped, because the failure it targets didn't happen this run. Criterion 1 went from 4/5 to 5/5, but that's because the model happened not to drop out, not because of my change. My change only affects what the trace shows when the model fails, and it never failed. The after run did show something useful though: on criterion 3 try 3, the service pushed back and `generate.py` retried ("attempt 1 of 5") and succeeded. My best guess is the before failure was the same thing with the retries running out, and the new Cause line would confirm that next time it happens.
 
 <!-- If it made things worse, say that. Honestly reported, that earns full
      credit and is more interesting than one that worked. -->
@@ -413,6 +413,12 @@ full. -->
 <!-- For each criterion still missed: what you'd do, and why you stopped where
      you did. "I ran out of time" is fine if it's true. Pretending nothing is
      left is not. -->
+Nothing missed in either run, but a few things aren't right:
+
+- **The improvement is untested.** The model never failed in the after run, so I haven't seen the Cause line work for real. Next I'd force it with a bad key and check the trace shows the actual error.
+- **Criterion 4 is too easy.** Every caption mentioned the price. I'd tighten the fit card criterion to something like "no two fit cards for different items share an opening phrase," since most open with "Scored this..." or "Found this...".
+- **Empty wardrobe captions can claim things that aren't true.** In the before run, one empty-wardrobe caption said the jacket "works with literally everything in my closet" when the closet is empty. The prompt doesn't tell the model the user owns nothing.
+- **Price formatting is inconsistent** ($24 vs $24.00). Small, but it reads like a product listing sometimes.
 
 
 
