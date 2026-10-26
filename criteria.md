@@ -71,10 +71,10 @@ Is isnt random... the itsem moves through the session by code not agent sp there
      sentence? A card longer than a caption anyone would post? Any of those can
      be turned into a number. -->
 
-the  caption mentions the same price the same item 4 out 5 times
+An empty wardrobe still gets non-empty outfit advice, with no crash, in 5 of 5 tries.
 
 **Why this target:**
-a model writes this, so it might drop something sometimes
+The original named no target, so it couldn't be scored. The original reason was also about price checking, not the empty wardrobe. The real reason: the empty wardrobe check is plain code, but a model writes the advice, so a strict target tests whether the fallback holds every time.
 
 
 ---

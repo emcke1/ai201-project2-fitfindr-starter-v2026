@@ -202,22 +202,78 @@ Scored these vintage Levi's 501s on Depop for just $38 and I am never taking the
 
 ## Run Log — Before
 
-<!-- Five criteria, five tries each, in this exact format.
+| Criterion                                              | Target           | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict   |
+|---                                                     |---               |---    |---    |---    |---    |---    |---        |
+| 1. Matching query completes all three tools            | 4 of 5           | PASS  | PASS  | FAIL  | PASS  | PASS  | MET (4/5) |
+| 2. Impossible query stops before suggest_outfit        | 5 of 5           | PASS  | PASS  | PASS  | PASS  | PASS  | MET (5/5) |
+| 3. Selected item id matches id suggest_outfit received | 5 of 5           | PASS  | PASS  | PASS  | PASS  | PASS  | MET (5/5) |
+| 4. Fit card mentions the item's price                  | 4 of 5           | PASS  | PASS  | PASS  | PASS  | PASS  | MET (5/5) |
+| 5. Empty wardrobe still gets outfit advice             | 5 of 5 (revised) | PASS  | PASS  | PASS  | PASS  | PASS  | MET (5/5) |
 
-     Five, because your criteria are written out of five. Mark each try PASS
-     or FAIL, count the passes, and read that count against your target — a
-     row targeting 4 of 5 with three PASS cells is MISSED (3/5).
+**Real output from one try per criterion** (`agent.py::run_agent`, run by `run_eval.py::main`, full log in `results/run_2026-10-26_0139_before.md`)
 
-     `python run_eval.py --label before` runs everything and writes the table
-     into results/. Paste it here and fill in the verdicts. -->
+**Criterion 1, try 3 (the one FAIL):**
+```
+[1] parse_query
+      in:  vintage graphic tee under $30
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 10 items: Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey, Y2K Baby Tee — Butterfly Print … +7 more
+      →    branch: found results, selected lst_006
+[3] model unavailable
+      →    stopped, handler set session['error']
+```
+- stopped early: yes — Couldn't reach the AI model, so no outfit or caption could be written. Check that GEMINI_API_KEY in your .env file is correct, then try again in a minute.
 
-| Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
-|---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+**Criterion 2, try 1:**
+```
+[1] parse_query
+      in:  designer ballgown size XXS under $5
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: [] (empty)
+      →    branch: empty, stopping before suggest_outfit
+```
+- stopped early: yes — Nothing matched 'designer ballgown' in size XXS under $5. Try to raise your max price, or drop the size or try a nearby one, or use fewer or more general keywords (like 'dress' instead of 'ballgown').
+
+**Criterion 3, try 1:**
+```
+[2] search_listings (via MCP)
+      out: 10 items: 90s Leather Bomber — Black, Platform Mary Janes — Black Patent, Oversized Flannel Shirt — Plaid Red/Black … +7 more
+      →    branch: found results, selected lst_022
+[3] suggest_outfit
+      in:  {'new_item': 'lst_022', 'wardrobe_items': 10}
+```
+
+**Criterion 4, try 1** (item price is $42.0):
+```
+Scored this vintage Wrangler denim jacket on Poshmark for just $42 and I am already obsessed with the wash. It's got that perfectly broken-in, effortless streetwear vibe that makes throwing an outfit together way too easy. Can't wait to live in this all season long! #thriftfind #denimstyle #poshmarkfinds
+```
+
+**Criterion 5, try 1:**
+```
+[3] suggest_outfit
+      in:  {'new_item': 'lst_007', 'wardrobe_items': 0}
+      out: Pair this vintage Wrangler jacket with a black ribbed crop top and high-waisted, wide-leg olive green cargo pa…
+```
+
+---
+
+
+| Criterion                                              | Target           | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict   |
+|---                                                     |---               |---    |---    |---    |---    |---    |---        |
+| 1. Matching query completes all three tools            | 4 of 5           | PASS  | PASS  | FAIL  | PASS  | PASS  | MET (4/5) |
+| 2. Impossible query stops before suggest_outfit        | 5 of 5           | PASS  | PASS  | PASS  | PASS  | PASS  | MET (5/5) |
+| 3. Selected item id matches id suggest_outfit received | 5 of 5           | PASS  | PASS  | PASS  | PASS  | PASS  | MET (5/5) |
+| 4. Fit card mentions the item's price                  | 4 of 5           | PASS  | PASS  | PASS  | PASS  | PASS  | MET (5/5) |
+| 5. Empty wardrobe still gets outfit advice             | 5 of 5 (revised) | PASS  | PASS  | PASS  | PASS  | PASS  | MET (5/5) | - this is what it looks like?
+
+
+
+
+
 
 **Real output from one try**, pasted as text, naming the file and function
 that produced it:
