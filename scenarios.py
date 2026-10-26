@@ -22,19 +22,36 @@ SCENARIOS = [
         "criterion": 1,
     },
     {
-        # A query nothing can match. Criterion 2 — the branch.
+        # A query nothing can match. Criterion 2, the branch.
         "name": "impossible query stops early",
         "query": "designer ballgown size XXS under $5",
         "wardrobe": "example",
         "criterion": 2,
     },
     {
-        # A user with nothing saved. One of unit 4's three failure modes.
+        # Criterion 3. The selected item's id should match the id
+        # suggest_outfit received.
+        "name": "selected item reaches suggest_outfit",
+        "query": "black leather jacket under $80",
+        "wardrobe": "example",
+        "criterion": 3,
+    },
+    {
+        # Criterion 4. Same query five times, check each fit card
+        # mentions the item's price.
+        "name": "fit card mentions price",
+        "query": "denim jacket under $50",
+        "wardrobe": "example",
+        "criterion": 4,
+    },
+    {
+        # Criterion 5. Empty wardrobe should still get outfit advice.
         "name": "empty wardrobe",
         "query": "denim jacket under $50",
         "wardrobe": "empty",
-        "criterion": None,
+        "criterion": 5,
     },
+
     # TODO: add what your criteria 3, 4 and 5 need.
     #
     # Set "criterion" to the number in criteria.md that the scenario tests.
