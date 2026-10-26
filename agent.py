@@ -12,6 +12,7 @@ Build and test your three tools in `tools.py` first. Then come here.
 
     python agent.py          runs both example paths below
 """
+import re
 
 import config
 import trace
@@ -45,6 +46,56 @@ def new_session(query: str, wardrobe: dict) -> dict:
         "fit_card": None,            # what create_fit_card returned
         "error": None,               # set when the run ended early
     }
+
+
+# ── helpers ───────────────────────────────────────────────────────────────────
+
+_FILLER = ("looking for", "i want", "i need", "find me", "show me", "something")
+
+
+def _parse_query(query: str) -> dict:
+    """Pull max_price, size, and a keyword description out of the query with regex."""
+    text = query.lower()
+
+    # max_price: "under $30", "below 30", "less than $25", or just "$30"
+    max_price = None
+    m = re.search(r"(?:under|below|less than|max)\s*\$?\s*(\d+(?:\.\d+)?)", text) \
+        or re.search(r"\$\s*(\d+(?:\.\d+)?)", text)
+    if m:
+        max_price = float(m.group(1))
+        text = text.replace(m.group(0), " ")
+
+    # size: "size M", "size s/m", "size XXS"
+    size = None
+    m = re.search(r"\bsize\s+([a-z0-9/]+)", text)
+    if m:
+        size = m.group(1).upper()
+        text = text.replace(m.group(0), " ")
+
+    # description: whatever's left, minus filler phrases and punctuation
+    for phrase in _FILLER:
+        text = text.replace(phrase, " ")
+    description = " ".join(re.sub(r"[^a-z0-9' ]", " ", text).split())
+
+    return {"description": description, "size": size, "max_price": max_price}
+
+
+def _no_results_message(parsed: dict) -> str:
+    """Say what was searched and what the user could change."""
+    searched = f"'{parsed['description']}'"
+    if parsed["size"]:
+        searched += f" in size {parsed['size']}"
+    if parsed["max_price"] is not None:
+        searched += f" under ${parsed['max_price']:.0f}"
+
+    tips = []
+    if parsed["max_price"] is not None:
+        tips.append("raise your max price")
+    if parsed["size"]:
+        tips.append("drop the size or try a nearby one")
+    tips.append("use fewer or more general keywords (like 'dress' instead of 'ballgown')")
+
+    return f"Nothing matched {searched}. Try to " + ", or ".join(tips) + "."
 
 
 # ── planning loop ─────────────────────────────────────────────────────────────
@@ -106,9 +157,41 @@ def run_agent(query: str, wardrobe: dict) -> dict:
         than a stack trace. The import is already at the top of this file.
     """
     session = new_session(query, wardrobe)
+    next_step = "parse"
+    count = 0
 
-    # TODO: delete these two lines and build the loop.
-    session["error"] = "The planning loop isn't built yet — see the TODO in agent.py."
+    while next_step != "done":
+        count += 1
+        trace.check_iterations(count)
+
+        if next_step == "parse":
+            session["parsed"] = _parse_query(session["query"])
+            next_step = "search"
+
+        elif next_step == "search":
+            p = session["parsed"]
+            session["search_results"] = search_listings(p["description"], p["size"], p["max_price"])
+
+            # THE BRANCH
+            if not session["search_results"]:
+                session["error"] = _no_results_message(p)
+                next_step = "done"          # stop, never call suggest_outfit
+            else:
+                session["selected_item"] = session["search_results"][0]
+                next_step = "suggest"
+
+        elif next_step == "suggest":
+            session["outfit_suggestion"] = suggest_outfit(
+                session["selected_item"], session["wardrobe"]
+            )
+            next_step = "fit_card"
+
+        elif next_step == "fit_card":
+            session["fit_card"] = create_fit_card(
+                session["outfit_suggestion"], session["selected_item"]
+            )
+            next_step = "done"
+
     return session
 
 
@@ -145,3 +228,4 @@ if __name__ == "__main__":
         "\nThe second one should stop before the fit card. If both paths look "
         "the same,\nthe branch isn't doing anything yet."
     )
+    

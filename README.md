@@ -127,8 +127,17 @@ returns a descriptive msg if 'outfit' is empty or a whitespace than raising
 **One full query**
 
 ```
-$ python app.py ask '...'
+$ python app.py ask 'vintage graphic tee under $30'
 
+  Found:    Graphic Tee — 2003 Tour Bootleg Style — $24.0 on depop
+
+  Outfit:   Outfit one leans into classic grunge. Pair the Graphic Tee — 2003 Tour Bootleg Style with the baggy straight-leg jeans, dark wash, and layer the vintage black denim jacket on top. Finish the look with the black combat boots and the black crossbody bag for an effortless, edgy streetwear vibe.
+
+Outfit two plays with proportions. Tuck the Graphic Tee — 2003 Tour Bootleg Style into the wide-leg khaki trousers, cinched with the brown leather belt. Throw the oversized grey crewneck sweatshirt over your shoulders for texture, and complete the outfit with the chunky white sneakers and the black crossbody bag for a casual, effortless everyday look.
+
+  Fit card: Scored this moody 2003 tour bootleg style graphic tee on Depop for just $24, and it has the absolute best faded wash. I'm obsessed with how heavy and worn-in the cotton feels. It's giving total 90s grunge without even trying. #thrifted #grunge #depopfinds
+
+0 model calls this session, 2 served from cache
 ```
 
 **The three tools, tested one at a time**
