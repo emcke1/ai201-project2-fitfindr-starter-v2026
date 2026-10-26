@@ -134,18 +134,31 @@ $ python app.py ask '...'
 **The three tools, tested one at a time**
 
 ```
-$ python -c "from tools import search_listings; print(search_listings('graphic tee', max_price=30))"
+$ python -c "from tools import search_listings; r = search_listings('graphic tee', max_price=30); print(len(r)); [print(x['id'], x['title'], x['price'], x['size']) for x in r]"
+6
+lst_006 Graphic Tee — 2003 Tour Bootleg Style 24.0 L
+lst_002 Y2K Baby Tee — Butterfly Print 18.0 S/M
+lst_033 Vintage Band Tee — Faded Grey 19.0 L
+lst_015 Vintage Graphic Hoodie — Faded Black 26.0 L
+lst_017 Mesh Long-Sleeve Top — Black 15.0 S/M
+lst_011 Low-Rise Cargo Pants — Khaki 27.0 W29
 
+$ python -c "from tools import search_listings; print(search_listings('ballgown tuxedo', max_price=1))"
+[]
 ```
 
 ```
-$ python -c "from tools import suggest_outfit; ..."
+$ python -c "from tools import suggest_outfit; from utils.data_loader import get_example_wardrobe, load_listings; print(suggest_outfit(load_listings()[0], get_example_wardrobe()))"
+For an effortless everyday streetwear look, pair the Vintage Levi's 501 Jeans — Medium Wash with the white ribbed tank top, layered under the oversized grey crewneck sweatshirt. Add the chunky white sneakers and the black crossbody bag for a casual finish.
 
+For a moodier edge, style the vintage denim with the black cropped zip hoodie and the black combat boots. Cinch the waist with the brown leather belt and throw on the vintage black denim jacket to complete a double-denim fit.
 ```
 
 ```
-$ python -c "from tools import create_fit_card; ..."
+$ AI201_CACHE=0 python -c "from tools import create_fit_card; from utils.data_loader import load_listings; print(create_fit_card('jeans and white sneakers', load_listings()[0]))"
+Scored these vintage Levi's 501s on Depop for just $38 and I am never taking them off. They've got that perfect worn-in indigo wash and relaxed streetwear vibe that looks so effortless with just a crisp pair of white sneakers. Truly peak effortless denim energy.
 
+#thrifted #levis501 #depopfinds
 ```
 
 ---

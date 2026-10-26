@@ -88,10 +88,10 @@ a model writes this, so it might drop something sometimes
      search respects a price ceiling — anything, as long as it names a number
      or an observable outcome. -->
 
-
+an empty wardrobe still gets outfit advice instead of a crash or empty answer.
 
 **Why this target:**
-
+the price check is plain code comparing two numbers, no model
 
 
 ---
